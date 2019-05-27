@@ -5,9 +5,11 @@ with open('log.txt') as f:
     lines = f.readlines()
     dates = defaultdict(list)
     for line in lines:
-        timo = datetime.datetime.strptime(line, '%a %b %d %H:%M:%S %Y\n')
-        key = str(timo.day) +"." + str(timo.month)
-        dates[key].append(timo)            
+        if(str(line).startswith("Date:   ")):
+            stripped = str(line).replace("Date:   ","")
+            timo = datetime.datetime.strptime(stripped, '%a %b %d %H:%M:%S %Y\n')
+            key = str(timo.day) +"." + str(timo.month) + "." + str(timo.year)
+            dates[key].append(timo)      
     total = 0
     for key,timos in dates.items():
         timo = max(timos)
@@ -19,8 +21,8 @@ with open('log.txt') as f:
             dm = (dh-math.floor(dh))*60
             dh = math.floor(dh)
             dm = math.floor(dm)
-            print(key +". overtime: " + str(dh) + ":" + str(dm))
+            print(key +" overtime: " + str(dh).zfill(2) + ":" + str(dm).zfill(2))
             total += delta.seconds
     totalh = math.floor(total/3600)
     totalm = math.floor(((total/3600)-totalh)*60)
-    print("total: " + str(totalh) + ":" + str(totalm))
+    print("total: " + str(totalh).zfill(2) + ":" + str(totalm).zfill(2))
